@@ -3,35 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Salary Increase Calculator</title>
+    <title>Salary Growth Calculator</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header>
-        <h1>Salary Increase Calculator</h1>
+        <h1>Salary Growth Calculator</h1>
     </header>
     <main>
         <div class="calculator">
             <div class="input-group">
-                <label for="previous-salary">Previous Monthly Salary</label>
-                <input type="number" id="previous-salary" placeholder="Enter previous salary" required>
+                <label for="base-salary">Base Monthly Salary</label>
+                <input type="number" id="base-salary" placeholder="Enter current salary" required>
             </div>
             <div class="input-group">
-                <label for="new-salary">New Monthly Salary</label>
-                <input type="number" id="new-salary" placeholder="Enter new salary" required>
+                <label for="target-salary">Target Monthly Salary</label>
+                <input type="number" id="target-salary" placeholder="Enter proposed salary" required>
             </div>
-            <button id="calculate-btn">Calculate Increase</button>
-            <div id="result" class="result hidden">
-                <h2>Salary Increase</h2>
-                <p>Amount: <span id="amount-increase"></span></p>
-                <p>Percentage: <span id="percentage-increase"></span></p>
+            <button id="calculate-btn">Calculate Growth</button>
+            <div id="results" class="results hidden">
+                <h2>Salary Analysis</h2>
+                <p>Absolute Increase: <span id="absolute-increase"></span></p>
+                <p>Percentage Growth: <span id="percentage-growth"></span></p>
             </div>
         </div>
     </main>
     <footer>
-        <p>&copy; 2025 Salary Increase Calculator. All rights reserved.</p>
+        <p>&copy; 2025 Maruf Inc. All rights reserved.</p>
     </footer>
     <script src="script.js"></script>
 </body>
 </html>
-

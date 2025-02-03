@@ -1,25 +1,24 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const calculateBtn = document.getElementById("calculate-btn")
-  const resultDiv = document.getElementById("result")
-  const amountIncrease = document.getElementById("amount-increase")
-  const percentageIncrease = document.getElementById("percentage-increase")
+  const calculateBtn = document.getElementById("calculate-btn");
+  const resultsDiv = document.getElementById("results");
+  const absoluteIncrease = document.getElementById("absolute-increase");
+  const percentageGrowth = document.getElementById("percentage-growth");
 
   calculateBtn.addEventListener("click", () => {
-    const previousSalary = Number.parseFloat(document.getElementById("previous-salary").value)
-    const newSalary = Number.parseFloat(document.getElementById("new-salary").value)
+    const baseSalary = parseFloat(document.getElementById("base-salary").value);
+    const targetSalary = parseFloat(document.getElementById("target-salary").value);
 
-    if (isNaN(previousSalary) || isNaN(newSalary)) {
-      alert("Please enter valid numbers for both salaries.")
-      return
+    if (isNaN(baseSalary) || isNaN(targetSalary)) {
+      alert("Please enter valid compensation figures.");
+      return;
     }
 
-    const increase = newSalary - previousSalary
-    const percentIncrease = (increase / previousSalary) * 100
+    const difference = targetSalary - baseSalary;
+    const growthRate = (difference / baseSalary) * 100;
 
-    amountIncrease.textContent = `$${increase.toFixed(2)}`
-    percentageIncrease.textContent = `${percentIncrease.toFixed(2)}%`
+    absoluteIncrease.textContent = `$${difference.toFixed(2)}`;
+    percentageGrowth.textContent = `${growthRate.toFixed(1)}%`;
 
-    resultDiv.classList.remove("hidden")
-  })
-})
-
+    resultsDiv.classList.remove("hidden");
+  });
+});
