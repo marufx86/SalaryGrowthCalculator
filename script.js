@@ -1,11 +1,26 @@
 document.addEventListener("DOMContentLoaded", () => {
     const calculateBtn = document.getElementById("calculate-btn");
+    const themeToggle = document.getElementById("theme-toggle");
     const resultsDiv = document.getElementById("results");
     const absoluteIncrease = document.getElementById("absolute-increase");
     const percentageGrowth = document.getElementById("percentage-growth");
     const prevYearlySalary = document.getElementById("prev-yearly-salary");
     const newYearlySalary = document.getElementById("new-yearly-salary");
     let salaryChart;
+    let darkMode = JSON.parse(localStorage.getItem("darkMode")) || false;
+
+    // Apply saved theme
+    document.body.classList.toggle("dark-mode", darkMode);
+    themeToggle.classList.toggle("active", darkMode);
+
+    // Theme toggle functionality
+    themeToggle.addEventListener("click", () => {
+        darkMode = !darkMode;
+        document.body.classList.toggle("dark-mode", darkMode);
+        themeToggle.classList.toggle("active", darkMode);
+        localStorage.setItem("darkMode", JSON.stringify(darkMode));
+        if (salaryChart) updateChartTheme();
+    });
 
     calculateBtn.addEventListener("click", () => {
         const baseSalary = parseFloat(document.getElementById("base-salary").value);
@@ -34,6 +49,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         const ctx = document.getElementById("salary-chart").getContext("2d");
+        
+        const backgroundColors = darkMode ? ["#4a5568", "#6366f1"] : ["#667eea", "#90cdf4"];
         salaryChart = new Chart(ctx, {
             type: "bar",
             data: {
@@ -41,7 +58,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 datasets: [{
                     label: "Yearly Salary ($)",
                     data: [prevYearly, newYearly],
-                    backgroundColor: ["#667eea", "#90cdf4"],
+                    backgroundColor: backgroundColors,
                     borderRadius: 8
                 }]
             },
@@ -50,10 +67,22 @@ document.addEventListener("DOMContentLoaded", () => {
                 maintainAspectRatio: false,
                 scales: {
                     y: {
-                        beginAtZero: true
+                        beginAtZero: true,
+                        ticks: {
+                            color: darkMode ? "#d0d5dd" : "#2d3748"
+                        }
                     }
                 }
             }
         });
     });
+
+    // Function to update chart colors when theme changes
+    function updateChartTheme() {
+        if (!salaryChart) return;
+        const newBackgroundColors = darkMode ? ["#4a5568", "#6366f1"] : ["#667eea", "#90cdf4"];
+        salaryChart.data.datasets[0].backgroundColor = newBackgroundColors;
+        salaryChart.options.scales.y.ticks.color = darkMode ? "#d0d5dd" : "#2d3748";
+        salaryChart.update();
+    }
 });

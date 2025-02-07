@@ -1,10 +1,21 @@
 :root {
-    --primary-color: #1a202c; /* Dark Gray */
-    --secondary-color: #667eea; /* Light Purple */
-    --accent-color: #90cdf4; /* Light Blue */
-    --background-color: #f7fafc; /* Very Light Gray */
-    --text-color: #2d3748; /* Dark Gray */
-    --muted-text-color: #718096; /* Medium Gray */
+    --primary-color: #1a202c;
+    --secondary-color: #667eea;
+    --accent-color: #90cdf4;
+    --background-color: #f7fafc;
+    --text-color: #2d3748;
+    --muted-text-color: #718096;
+    --toggle-width: 60px;
+    --toggle-height: 30px;
+}
+
+body.dark-mode {
+    --primary-color: #2d3748;
+    --secondary-color: #4a5568;
+    --accent-color: #6366f1;
+    --background-color: #121212;
+    --text-color: #ffffff;
+    --muted-text-color: #d0d5dd;
 }
 
 * {
@@ -20,10 +31,67 @@ body {
 }
 
 header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     background-color: var(--primary-color);
     color: white;
     padding: 1.5rem;
     text-align: center;
+}
+
+#theme-toggle {
+    width: var(--toggle-width);
+    height: var(--toggle-height);
+    border-radius: 15px;
+    background-color: #add8e6;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 0 5px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+#theme-toggle.active {
+    background-color: #34495e;
+    justify-content: flex-end;
+    transform: scale(1.02);
+}
+
+#theme-toggle svg {
+    width: 20px;
+    height: 20px;
+    transition: opacity 0.3s ease;
+}
+
+.sun-icon {
+    opacity: 1;
+}
+
+.moon-icon {
+    opacity: 0;
+}
+
+#theme-toggle.active .sun-icon {
+    opacity: 0;
+}
+
+#theme-toggle.active .moon-icon {
+    opacity: 1;
+}
+
+.sun-icon circle {
+    fill: #ffd700;
+}
+
+.moon-icon circle {
+    fill: #f3f3f3;
+}
+
+.moon-icon .crater {
+    fill: #2c3e50;
 }
 
 main {
@@ -41,10 +109,6 @@ main {
     width: 100%;
     max-width: 480px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-
-.calculator:hover {
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
 }
 
 .input-group {
@@ -84,6 +148,7 @@ button {
     cursor: pointer;
     width: 100%;
     transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-top: 1.2rem;
 }
 
 button:hover {

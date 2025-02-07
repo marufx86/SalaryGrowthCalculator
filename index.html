@@ -11,6 +11,21 @@
 <body>
     <header>
         <h1>Salary Growth Calculator</h1>
+        <button id="theme-toggle">
+            <!-- Sun SVG -->
+            <svg class="sun-icon" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10"/>
+                <circle cx="12" cy="12" r="3" fill="#fff"/>
+            </svg>
+            <!-- Moon SVG -->
+            <svg class="moon-icon" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10"/>
+                <circle cx="12" cy="12" r="3" fill="#2c3e50"/>
+                <circle class="crater" cx="8" cy="8" r="1"/>
+                <circle class="crater" cx="16" cy="8" r="1"/>
+                <circle class="crater" cx="12" cy="16" r="1"/>
+            </svg>
+        </button>
     </header>
     <main>
         <div class="calculator">
@@ -26,10 +41,10 @@
             
             <div id="results" class="results hidden">
                 <h2>Salary Analysis</h2>
-                <p>Absolute Increase: <span id="absolute-increase"></span></p>
-                <p>Percentage Growth: <span id="percentage-growth"></span></p>
-                <p>Previous Yearly Salary: <span id="prev-yearly-salary"></span></p>
-                <p>After Increase Yearly Salary: <span id="new-yearly-salary"></span></p>
+                <p>Absolute Increase: <span id="absolute-increase">$0.00</span></p>
+                <p>Percentage Growth: <span id="percentage-growth">0%</span></p>
+                <p>Previous Yearly Salary: <span id="prev-yearly-salary">$0.00</span></p>
+                <p>After Increase Yearly Salary: <span id="new-yearly-salary">$0.00</span></p>
                 <canvas id="salary-chart"></canvas>
             </div>
         </div>
