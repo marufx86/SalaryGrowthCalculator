@@ -6,7 +6,7 @@
     <title>Salary Growth Calculator</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.js for animated graph -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <header>
@@ -23,12 +23,14 @@
                 <input type="number" id="target-salary" placeholder="Enter proposed salary" required>
             </div>
             <button id="calculate-btn">Calculate Growth</button>
-
+            
             <div id="results" class="results hidden">
                 <h2>Salary Analysis</h2>
                 <p>Absolute Increase: <span id="absolute-increase"></span></p>
                 <p>Percentage Growth: <span id="percentage-growth"></span></p>
-                <canvas id="growth-chart"></canvas> <!-- Chart Container -->
+                <p>Previous Yearly Salary: <span id="prev-yearly-salary"></span></p>
+                <p>After Increase Yearly Salary: <span id="new-yearly-salary"></span></p>
+                <canvas id="salary-chart"></canvas>
             </div>
         </div>
     </main>

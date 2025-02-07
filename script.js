@@ -3,49 +3,55 @@ document.addEventListener("DOMContentLoaded", () => {
     const resultsDiv = document.getElementById("results");
     const absoluteIncrease = document.getElementById("absolute-increase");
     const percentageGrowth = document.getElementById("percentage-growth");
-    const ctx = document.getElementById("growth-chart").getContext("2d");
-    let growthChart;
+    const prevYearlySalary = document.getElementById("prev-yearly-salary");
+    const newYearlySalary = document.getElementById("new-yearly-salary");
+    let salaryChart;
 
     calculateBtn.addEventListener("click", () => {
         const baseSalary = parseFloat(document.getElementById("base-salary").value);
         const targetSalary = parseFloat(document.getElementById("target-salary").value);
 
-        if (isNaN(baseSalary) || isNaN(targetSalary) || baseSalary <= 0 || targetSalary <= 0) {
+        if (isNaN(baseSalary) || isNaN(targetSalary)) {
             alert("Please enter valid salary figures.");
             return;
         }
 
-        const difference = targetSalary - baseSalary;
-        const growthRate = (difference / baseSalary) * 100;
+        const absoluteDiff = targetSalary - baseSalary;
+        const percentageIncrease = (absoluteDiff / baseSalary) * 100;
+        const prevYearly = baseSalary * 12;
+        const newYearly = targetSalary * 12;
 
-        absoluteIncrease.textContent = `$${difference.toFixed(2)}`;
-        percentageGrowth.textContent = `${growthRate.toFixed(1)}%`;
+        absoluteIncrease.textContent = `$${absoluteDiff.toFixed(2)}`;
+        percentageGrowth.textContent = `${percentageIncrease.toFixed(1)}%`;
+        prevYearlySalary.textContent = `$${prevYearly.toFixed(2)}`;
+        newYearlySalary.textContent = `$${newYearly.toFixed(2)}`;
 
         resultsDiv.classList.remove("hidden");
+        resultsDiv.classList.add("show");
 
-        // Destroy previous chart instance if it exists
-        if (growthChart) {
-            growthChart.destroy();
+        if (salaryChart) {
+            salaryChart.destroy();
         }
 
-        // Create an animated bar chart
-        growthChart = new Chart(ctx, {
+        const ctx = document.getElementById("salary-chart").getContext("2d");
+        salaryChart = new Chart(ctx, {
             type: "bar",
             data: {
-                labels: ["Salary Growth"],
+                labels: ["Previous Yearly Salary", "After Increase"],
                 datasets: [{
-                    label: "Growth Percentage",
-                    data: [growthRate],
-                    backgroundColor: "#667eea",
-                    borderRadius: 6,
+                    label: "Yearly Salary ($)",
+                    data: [prevYearly, newYearly],
+                    backgroundColor: ["#667eea", "#90cdf4"],
+                    borderRadius: 8
                 }]
             },
             options: {
-                animation: {
-                    duration: 1000
-                },
+                responsive: true,
+                maintainAspectRatio: false,
                 scales: {
-                    y: { beginAtZero: true, max: 100 }
+                    y: {
+                        beginAtZero: true
+                    }
                 }
             }
         });
