@@ -7,7 +7,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const prevYearlySalary = document.getElementById("prev-yearly-salary");
     const newYearlySalary = document.getElementById("new-yearly-salary");
     let salaryChart;
-    let darkMode = JSON.parse(localStorage.getItem("darkMode")) || false;
+    let projectionChart;
+    let darkMode = JSON.parse(localStorage.getItem("darkMode")) || true;
 
     // Apply saved theme
     document.body.classList.toggle("dark-mode", darkMode);
@@ -20,6 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
         themeToggle.classList.toggle("active", darkMode);
         localStorage.setItem("darkMode", JSON.stringify(darkMode));
         if (salaryChart) updateChartTheme();
+        if (projectionChart) updateProjectionTheme();
     });
 
     calculateBtn.addEventListener("click", () => {
@@ -55,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
         salaryChart = new Chart(ctx, {
             type: "bar",
             data: {
-                labels: ["Previous Yearly Salary", "After Increase"],
+                labels: ["Current Yearly Salary", "Target Yearly Salary"],
                 datasets: [{
                     label: "Yearly Salary ($)",
                     data: [prevYearly, newYearly],
@@ -69,6 +71,60 @@ document.addEventListener("DOMContentLoaded", () => {
                 scales: {
                     y: {
                         beginAtZero: true,
+                        ticks: {
+                            color: darkMode ? "#d0d5dd" : "#2d3748"
+                        }
+                    }
+                }
+            }
+        });
+
+        // Projection calculation
+        const projectedYearlySalaries = [];
+        let currentYearly = newYearly;
+        const annualRaise = percentageIncrease; // Use calculated raise percentage
+        for (let year = 1; year <= 10; year++) {
+            currentYearly *= (1 + annualRaise / 100);
+            projectedYearlySalaries.push(currentYearly);
+        }
+
+        // Create projection chart
+        const projectionCtx = document.getElementById("projection-chart").getContext("2d");
+        if (projectionChart) {
+            projectionChart.destroy();
+        }
+        projectionChart = new Chart(projectionCtx, {
+            type: "line",
+            data: {
+                labels: Array.from({length: 10}, (_, i) => i + 1),
+                datasets: [{
+                    label: "Projected Yearly Salary ($)",
+                    data: projectedYearlySalaries,
+                    borderColor: darkMode ? "#6366f1" : "#667eea",
+                    backgroundColor: darkMode ? "#4a5568" : "#edf2f7",
+                    tension: 0.4,
+                    pointRadius: 5,
+                    pointHoverRadius: 7
+                }]
+            },
+            options: {
+                responsive: true,
+                animation: {
+                    duration: 1000
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: "Years"
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: "Yearly Salary ($)"
+                        },
+                        beginAtZero: false,
                         ticks: {
                             color: darkMode ? "#d0d5dd" : "#2d3748"
                         }
@@ -102,5 +158,15 @@ document.addEventListener("DOMContentLoaded", () => {
         salaryChart.data.datasets[0].backgroundColor = newBackgroundColors;
         salaryChart.options.scales.y.ticks.color = darkMode ? "#d0d5dd" : "#2d3748";
         salaryChart.update();
+    }
+
+    function updateProjectionTheme() {
+        if (!projectionChart) return;
+        projectionChart.data.datasets[0].borderColor = darkMode ? "#6366f1" : "#667eea";
+        projectionChart.data.datasets[0].backgroundColor = darkMode ? "#4a5568" : "#edf2f7";
+        projectionChart.options.scales.x.title.text = "Years";
+        projectionChart.options.scales.y.title.text = "Yearly Salary ($)";
+        projectionChart.options.scales.y.ticks.color = darkMode ? "#d0d5dd" : "#2d3748";
+        projectionChart.update();
     }
 });

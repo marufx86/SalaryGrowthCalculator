@@ -30,12 +30,12 @@
     <main>
         <div class="calculator">
             <div class="input-group">
-                <label for="base-salary">Base Monthly Salary</label>
+                <label for="base-salary">Current Monthly Salary</label>
                 <input type="number" id="base-salary" placeholder="Enter current salary" required>
             </div>
             <div class="input-group">
                 <label for="target-salary">Target Monthly Salary</label>
-                <input type="number" id="target-salary" placeholder="Enter proposed salary" required>
+                <input type="number" id="target-salary" placeholder="Enter desired salary" required>
             </div>
             <button id="calculate-btn">Calculate Growth</button>
             
@@ -47,6 +47,7 @@
                 <p>Previous Yearly Salary: <span id="prev-yearly-salary">$0.00</span></p>
                 <p>After Increase Yearly Salary: <span id="new-yearly-salary">$0.00</span></p>
                 <canvas id="salary-chart"></canvas>
+                <canvas id="projection-chart"></canvas>
             </div>
         </div>
     </main>
