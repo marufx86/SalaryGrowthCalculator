@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const targetSalary = parseFloat(document.getElementById("target-salary").value);
 
         if (isNaN(baseSalary) || isNaN(targetSalary)) {
-            alert("Please enter valid salary figures.");
+            showError();
             return;
         }
 
@@ -41,6 +41,8 @@ document.addEventListener("DOMContentLoaded", () => {
         prevYearlySalary.textContent = `$${prevYearly.toFixed(2)}`;
         newYearlySalary.textContent = `$${newYearly.toFixed(2)}`;
 
+        hideError();
+
         resultsDiv.classList.remove("hidden");
         resultsDiv.classList.add("show");
 
@@ -49,7 +51,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         const ctx = document.getElementById("salary-chart").getContext("2d");
-        
         const backgroundColors = darkMode ? ["#4a5568", "#6366f1"] : ["#667eea", "#90cdf4"];
         salaryChart = new Chart(ctx, {
             type: "bar",
@@ -77,7 +78,24 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // Function to update chart colors when theme changes
+    function showError() {
+        const errorMessage = document.querySelector('.error-message');
+        errorMessage.classList.remove('hidden');
+
+        document.querySelectorAll('.results h2, .results p, .results canvas').forEach(el => {
+            el.classList.add('result-hidden');
+        });
+    }
+
+    function hideError() {
+        const errorMessage = document.querySelector('.error-message');
+        errorMessage.classList.add('hidden');
+
+        document.querySelectorAll('.results h2, .results p, .results canvas').forEach(el => {
+            el.classList.remove('result-hidden');
+        });
+    }
+
     function updateChartTheme() {
         if (!salaryChart) return;
         const newBackgroundColors = darkMode ? ["#4a5568", "#6366f1"] : ["#667eea", "#90cdf4"];
