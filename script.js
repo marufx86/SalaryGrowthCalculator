@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const prevYearlySalary = document.getElementById("prev-yearly-salary");
   const newYearlySalary = document.getElementById("new-yearly-salary");
   const newYearlySalaryInflation = document.getElementById("new-yearly-salary-inflation");
+  const careerAdviceEl = document.getElementById("career-advice");
   let salaryChart;
   let projectionChart;
   let darkMode = JSON.parse(localStorage.getItem("darkMode")) || false;
@@ -39,18 +40,31 @@ document.addEventListener("DOMContentLoaded", () => {
     // Determine tick font size based on screen width for better readability
     const tickFontSize = window.innerWidth < 600 ? 12 : 14;
 
+    // Analysis calculations
     const absoluteDiff = targetSalary - baseSalary;
     const raisePercentage = (absoluteDiff / baseSalary) * 100;
     const prevYearly = baseSalary * 12;
-    const newYearly = targetSalary * 12;
+    const newYearlyVal = targetSalary * 12;
     // Calculate inflation-adjusted yearly salary for one year
-    const newYearlyInflation = newYearly / (1 + inflationRate / 100);
+    const newYearlyInflationVal = newYearlyVal / (1 + inflationRate / 100);
 
     absoluteIncrease.textContent = `$${absoluteDiff.toFixed(2)}`;
     percentageGrowth.textContent = `${raisePercentage.toFixed(1)}%`;
     prevYearlySalary.textContent = `$${prevYearly.toFixed(2)}`;
-    newYearlySalary.textContent = `$${newYearly.toFixed(2)}`;
-    newYearlySalaryInflation.textContent = `$${newYearlyInflation.toFixed(2)}`;
+    newYearlySalary.textContent = `$${newYearlyVal.toFixed(2)}`;
+    newYearlySalaryInflation.textContent = `$${newYearlyInflationVal.toFixed(2)}`;
+
+    // --- Career Growth Advice (Alternative) ---
+    // Calculate the real (inflation-adjusted) growth percentage between your previous and new salaries.
+    // This shows how much your purchasing power has actually increased.
+    const realIncreasePercentage = ((newYearlyInflationVal / prevYearly) - 1) * 100;
+    // Provide advice based on the real increase:
+    if (realIncreasePercentage < 5) {
+      careerAdviceEl.textContent = `Your nominal raise is ${raisePercentage.toFixed(1)}%, but after accounting for inflation, your real increase is only ${realIncreasePercentage.toFixed(1)}%. This suggests that inflation is eroding your gains. Consider negotiating a higher raise or investing in upskilling to secure better compensation.`;
+    } else {
+      careerAdviceEl.textContent = `Great work! Your nominal raise of ${raisePercentage.toFixed(1)}% translates into an inflation-adjusted increase of ${realIncreasePercentage.toFixed(1)}%, ensuring a meaningful boost to your purchasing power. Continue investing in your professional growth.`;
+    }
+    // --- End Career Growth Advice ---
 
     hideError();
     resultsDiv.classList.remove("hidden");
@@ -68,7 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
         labels: ["Current Yearly Salary", "Target Yearly Salary"],
         datasets: [{
           label: "Yearly Salary ($)",
-          data: [prevYearly, newYearly],
+          data: [prevYearly, newYearlyVal],
           backgroundColor: backgroundColors,
           borderRadius: 6,
           maxBarThickness: 50
@@ -96,15 +110,15 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    // Projection calculation for 10 years
+    // Projection calculation for 10 years (compound growth and inflation adjustment)
     const projectedYearlySalaries = [];
     const projectedRealSalaries = [];
-    let currentNominalSalary = newYearly;
-    const annualRaise = raisePercentage; // Using the calculated raise percentage
-
+    let currentNominalSalary = newYearlyVal;
+    // Here we compound the new salary by the same raise percentage each year.
     for (let year = 1; year <= 10; year++) {
-      currentNominalSalary *= (1 + annualRaise / 100);
+      currentNominalSalary *= (1 + raisePercentage / 100);
       projectedYearlySalaries.push(currentNominalSalary);
+      // Discount the nominal salary by the cumulative inflation factor for that year.
       const realSalary = currentNominalSalary / Math.pow(1 + inflationRate / 100, year);
       projectedRealSalaries.push(realSalary);
     }
