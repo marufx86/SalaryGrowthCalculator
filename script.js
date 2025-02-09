@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const newYearlySalaryInflation = document.getElementById("new-yearly-salary-inflation");
   let salaryChart;
   let projectionChart;
-  let darkMode = JSON.parse(localStorage.getItem("darkMode")) || true;
+  let darkMode = JSON.parse(localStorage.getItem("darkMode")) || false;
 
   // Apply saved theme
   document.body.classList.toggle("dark-mode", darkMode);
@@ -36,11 +36,14 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    // Determine tick font size based on screen width for better readability
+    const tickFontSize = window.innerWidth < 600 ? 12 : 14;
+
     const absoluteDiff = targetSalary - baseSalary;
     const raisePercentage = (absoluteDiff / baseSalary) * 100;
     const prevYearly = baseSalary * 12;
     const newYearly = targetSalary * 12;
-    // Calculate inflation-adjusted yearly salary (for one year)
+    // Calculate inflation-adjusted yearly salary for one year
     const newYearlyInflation = newYearly / (1 + inflationRate / 100);
 
     absoluteIncrease.textContent = `$${absoluteDiff.toFixed(2)}`;
@@ -50,7 +53,6 @@ document.addEventListener("DOMContentLoaded", () => {
     newYearlySalaryInflation.textContent = `$${newYearlyInflation.toFixed(2)}`;
 
     hideError();
-
     resultsDiv.classList.remove("hidden");
     resultsDiv.classList.add("show");
 
@@ -68,7 +70,8 @@ document.addEventListener("DOMContentLoaded", () => {
           label: "Yearly Salary ($)",
           data: [prevYearly, newYearly],
           backgroundColor: backgroundColors,
-          borderRadius: 8
+          borderRadius: 6,
+          maxBarThickness: 50
         }]
       },
       options: {
@@ -78,7 +81,15 @@ document.addEventListener("DOMContentLoaded", () => {
           y: {
             beginAtZero: true,
             ticks: {
+              font: { size: tickFontSize },
               color: darkMode ? "#d0d5dd" : "#2d3748"
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            labels: {
+              font: { size: tickFontSize }
             }
           }
         }
@@ -94,16 +105,15 @@ document.addEventListener("DOMContentLoaded", () => {
     for (let year = 1; year <= 10; year++) {
       currentNominalSalary *= (1 + annualRaise / 100);
       projectedYearlySalaries.push(currentNominalSalary);
-      // Calculate the inflation-adjusted (real) salary for this year:
       const realSalary = currentNominalSalary / Math.pow(1 + inflationRate / 100, year);
       projectedRealSalaries.push(realSalary);
     }
 
     // Create or update the projection chart (line chart) with both datasets
-    const projectionCtx = document.getElementById("projection-chart").getContext("2d");
     if (projectionChart) {
       projectionChart.destroy();
     }
+    const projectionCtx = document.getElementById("projection-chart").getContext("2d");
     projectionChart = new Chart(projectionCtx, {
       type: "line",
       data: {
@@ -115,8 +125,8 @@ document.addEventListener("DOMContentLoaded", () => {
             borderColor: darkMode ? "#6366f1" : "#667eea",
             backgroundColor: darkMode ? "#4a5568" : "#edf2f7",
             tension: 0.4,
-            pointRadius: 5,
-            pointHoverRadius: 7
+            pointRadius: 4,
+            pointHoverRadius: 6
           },
           {
             label: "Inflation Adjusted Salary ($)",
@@ -124,13 +134,14 @@ document.addEventListener("DOMContentLoaded", () => {
             borderColor: darkMode ? "#e53e3e" : "#f56565",
             backgroundColor: darkMode ? "#c53030" : "#feb2b2",
             tension: 0.4,
-            pointRadius: 5,
-            pointHoverRadius: 7
+            pointRadius: 4,
+            pointHoverRadius: 6
           }
         ]
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         animation: {
           duration: 1000
         },
@@ -138,17 +149,31 @@ document.addEventListener("DOMContentLoaded", () => {
           x: {
             title: {
               display: true,
-              text: "Years"
+              text: "Years",
+              font: { size: tickFontSize }
+            },
+            ticks: {
+              font: { size: tickFontSize },
+              color: darkMode ? "#d0d5dd" : "#2d3748"
             }
           },
           y: {
             title: {
               display: true,
-              text: "Yearly Salary ($)"
+              text: "Yearly Salary ($)",
+              font: { size: tickFontSize }
             },
             beginAtZero: false,
             ticks: {
+              font: { size: tickFontSize },
               color: darkMode ? "#d0d5dd" : "#2d3748"
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            labels: {
+              font: { size: tickFontSize }
             }
           }
         }
@@ -159,7 +184,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function showError() {
     const errorMessage = document.querySelector('.error-message');
     errorMessage.classList.remove('hidden');
-    document.querySelectorAll('.results h2, .results p, .results canvas').forEach(el => {
+    document.querySelectorAll('.results h2, .results p, .chart-container').forEach(el => {
       el.classList.add('result-hidden');
     });
   }
@@ -167,7 +192,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function hideError() {
     const errorMessage = document.querySelector('.error-message');
     errorMessage.classList.add('hidden');
-    document.querySelectorAll('.results h2, .results p, .results canvas').forEach(el => {
+    document.querySelectorAll('.results h2, .results p, .chart-container').forEach(el => {
       el.classList.remove('result-hidden');
     });
   }
@@ -182,10 +207,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function updateProjectionTheme() {
     if (!projectionChart) return;
-    // Update the nominal salary dataset
     projectionChart.data.datasets[0].borderColor = darkMode ? "#6366f1" : "#667eea";
     projectionChart.data.datasets[0].backgroundColor = darkMode ? "#4a5568" : "#edf2f7";
-    // Update the inflation-adjusted salary dataset
     projectionChart.data.datasets[1].borderColor = darkMode ? "#e53e3e" : "#f56565";
     projectionChart.data.datasets[1].backgroundColor = darkMode ? "#c53030" : "#feb2b2";
     projectionChart.options.scales.x.title.text = "Years";

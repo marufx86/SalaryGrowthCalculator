@@ -14,8 +14,8 @@ body.dark-mode {
   --secondary-color: #4a5568;
   --accent-color: #6366f1;
   --background-color: #121212;
-  --text-color: #000000;
-  --muted-text-color: #2d3748;
+  --text-color: #f7fafc;
+  --muted-text-color: #a0aec0;
 }
 
 * {
@@ -28,6 +28,7 @@ body {
   font-family: 'Inter', sans-serif;
   color: var(--text-color);
   background-color: var(--background-color);
+  line-height: 1.6;
 }
 
 header {
@@ -35,9 +36,8 @@ header {
   justify-content: space-between;
   align-items: center;
   background-color: var(--primary-color);
-  color: white;
+  color: #fff;
   padding: 1.5rem;
-  text-align: center;
 }
 
 #theme-toggle {
@@ -46,17 +46,15 @@ header {
   border-radius: 15px;
   background-color: #add8e6;
   cursor: pointer;
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: space-between;
   padding: 0 5px;
   transition: background-color 0.3s ease, transform 0.3s ease;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 #theme-toggle.active {
   background-color: #34495e;
-  justify-content: flex-end;
   transform: scale(1.02);
 }
 
@@ -95,24 +93,23 @@ header {
 }
 
 main {
+  padding: 2rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: calc(100vh - 100px);
-  padding: 2rem;
 }
 
 .calculator {
-  background-color: white;
+  background-color: #fff;
   border-radius: 12px;
-  padding: 2.5rem;
+  padding: 2rem;
   width: 100%;
-  max-width: 480px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  max-width: 600px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .input-group {
-  margin-bottom: 1.8rem;
+  margin-bottom: 1.5rem;
 }
 
 label {
@@ -120,13 +117,14 @@ label {
   margin-bottom: 0.5rem;
   font-weight: 500;
   color: var(--muted-text-color);
+  font-size: 1rem;
 }
 
 input {
   width: 100%;
-  padding: 1rem;
+  padding: 0.8rem;
   border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  border-radius: 6px;
   font-size: 1rem;
   background-color: #edf2f7;
 }
@@ -134,21 +132,21 @@ input {
 input:focus {
   outline: none;
   border-color: var(--accent-color);
-  background-color: white;
+  background-color: #fff;
 }
 
 button {
   background-color: var(--secondary-color);
-  color: white;
+  color: #fff;
   border: none;
-  padding: 1rem;
+  padding: 0.9rem;
   font-size: 1rem;
   font-weight: 500;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
   width: 100%;
   transition: background-color 0.3s ease, transform 0.2s ease;
-  margin-top: 1.2rem;
+  margin-top: 1rem;
 }
 
 button:hover {
@@ -161,9 +159,9 @@ button:hover {
   padding: 1.5rem;
   background-color: #edf2f7;
   border-radius: 8px;
-  transition: opacity 0.5s ease-in-out, transform 0.3s ease;
   opacity: 0;
   transform: translateY(10px);
+  transition: opacity 0.5s ease-in-out, transform 0.3s ease;
 }
 
 .results.show {
@@ -171,14 +169,29 @@ button:hover {
   transform: translateY(0);
 }
 
-canvas {
-  margin-top: 1rem;
-  width: 100% !important;
-  height: 200px !important;
+.results h2 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 0.5rem;
 }
 
-.hidden {
-  display: none;
+.results p {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.chart-container {
+  margin-top: 1.5rem;
+  position: relative;
+  width: 100%;
+  height: 300px; /* Default chart height */
+}
+
+canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
 }
 
 .error-message {
@@ -186,43 +199,42 @@ canvas {
   margin-bottom: 1rem;
 }
 
-.result-hidden {
+.hidden {
   display: none;
 }
 
 footer {
   background-color: var(--primary-color);
-  color: white;
+  color: #fff;
   text-align: center;
-  padding: 1.5rem;
+  padding: 1rem;
   position: fixed;
   bottom: 0;
   width: 100%;
+  font-size: 0.9rem;
 }
 
 /* Mobile Optimizations */
 @media (max-width: 600px) {
-  body {
-    padding: 0.5rem;
-  }
-  .calculator {
-    padding: 1.5rem;
-    width: 95%;
-    margin: 0 auto;
-  }
   header,
   footer {
     padding: 1rem;
   }
-  h1 {
-    font-size: 1.5rem;
+  .calculator {
+    padding: 1.5rem;
+    margin: 0 0.5rem;
   }
-  .input-group label,
-  .input-group input,
-  button {
+  label,
+  input,
+  button,
+  .results p,
+  .results h2 {
     font-size: 1rem;
   }
-  canvas {
-    height: 150px !important;
+  .chart-container {
+    height: 250px;
+  }
+  footer {
+    font-size: 0.8rem;
   }
 }
