@@ -1,201 +1,201 @@
 :root {
-    --primary-color: #1a202c;
-    --secondary-color: #667eea;
-    --accent-color: #90cdf4;
-    --background-color: #f7fafc;
-    --text-color: #2d3748;
-    --muted-text-color: #718096;
-    --toggle-width: 60px;
-    --toggle-height: 30px;
+  --primary-color: #1a202c;
+  --secondary-color: #667eea;
+  --accent-color: #90cdf4;
+  --background-color: #f7fafc;
+  --text-color: #2d3748;
+  --muted-text-color: #718096;
+  --toggle-width: 60px;
+  --toggle-height: 30px;
 }
 
 body.dark-mode {
-    --primary-color: #2d3748;
-    --secondary-color: #4a5568;
-    --accent-color: #6366f1;
-    --background-color: #121212;
-    --text-color: #000000;
-    --muted-text-color: #2d3748;
+  --primary-color: #2d3748;
+  --secondary-color: #4a5568;
+  --accent-color: #6366f1;
+  --background-color: #121212;
+  --text-color: #000000;
+  --muted-text-color: #2d3748;
 }
 
 * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 body {
-    font-family: 'Inter', sans-serif;
-    color: var(--text-color);
-    background-color: var(--background-color);
+  font-family: 'Inter', sans-serif;
+  color: var(--text-color);
+  background-color: var(--background-color);
 }
 
 header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: var(--primary-color);
-    color: white;
-    padding: 1.5rem;
-    text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--primary-color);
+  color: white;
+  padding: 1.5rem;
+  text-align: center;
 }
 
 #theme-toggle {
-    width: var(--toggle-width);
-    height: var(--toggle-height);
-    border-radius: 15px;
-    background-color: #add8e6;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 0 5px;
-    transition: background-color 0.3s ease, transform 0.3s ease;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  width: var(--toggle-width);
+  height: var(--toggle-height);
+  border-radius: 15px;
+  background-color: #add8e6;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 5px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 #theme-toggle.active {
-    background-color: #34495e;
-    justify-content: flex-end;
-    transform: scale(1.02);
+  background-color: #34495e;
+  justify-content: flex-end;
+  transform: scale(1.02);
 }
 
 #theme-toggle svg {
-    width: 20px;
-    height: 20px;
-    transition: opacity 0.3s ease;
+  width: 20px;
+  height: 20px;
+  transition: opacity 0.3s ease;
 }
 
 .sun-icon {
-    opacity: 1;
+  opacity: 1;
 }
 
 .moon-icon {
-    opacity: 0;
+  opacity: 0;
 }
 
 #theme-toggle.active .sun-icon {
-    opacity: 0;
+  opacity: 0;
 }
 
 #theme-toggle.active .moon-icon {
-    opacity: 1;
+  opacity: 1;
 }
 
 .sun-icon circle {
-    fill: #ffd700;
+  fill: #ffd700;
 }
 
 .moon-icon circle {
-    fill: #f3f3f3;
+  fill: #f3f3f3;
 }
 
 .moon-icon .crater {
-    fill: #2c3e50;
+  fill: #2c3e50;
 }
 
 main {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: calc(100vh - 100px);
-    padding: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 100px);
+  padding: 2rem;
 }
 
 .calculator {
-    background-color: white;
-    border-radius: 12px;
-    padding: 2.5rem;
-    width: 100%;
-    max-width: 480px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  background-color: white;
+  border-radius: 12px;
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 480px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .input-group {
-    margin-bottom: 1.8rem;
+  margin-bottom: 1.8rem;
 }
 
 label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-    color: var(--muted-text-color);
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--muted-text-color);
 }
 
 input {
-    width: 100%;
-    padding: 1rem;
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    font-size: 1rem;
-    background-color: #edf2f7;
+  width: 100%;
+  padding: 1rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: #edf2f7;
 }
 
 input:focus {
-    outline: none;
-    border-color: var(--accent-color);
-    background-color: white;
+  outline: none;
+  border-color: var(--accent-color);
+  background-color: white;
 }
 
 button {
-    background-color: var(--secondary-color);
-    color: white;
-    border: none;
-    padding: 1rem;
-    font-size: 1rem;
-    font-weight: 500;
-    border-radius: 8px;
-    cursor: pointer;
-    width: 100%;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    margin-top: 1.2rem;
+  background-color: var(--secondary-color);
+  color: white;
+  border: none;
+  padding: 1rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  margin-top: 1.2rem;
 }
 
 button:hover {
-    background-color: #5a67d8;
-    transform: translateY(-2px);
+  background-color: #5a67d8;
+  transform: translateY(-2px);
 }
 
 .results {
-    margin-top: 2rem;
-    padding: 1.5rem;
-    background-color: #edf2f7;
-    border-radius: 8px;
-    transition: opacity 0.5s ease-in-out, transform 0.3s ease;
-    opacity: 0;
-    transform: translateY(10px);
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background-color: #edf2f7;
+  border-radius: 8px;
+  transition: opacity 0.5s ease-in-out, transform 0.3s ease;
+  opacity: 0;
+  transform: translateY(10px);
 }
 
 .results.show {
-    opacity: 1;
-    transform: translateY(0);
+  opacity: 1;
+  transform: translateY(0);
 }
 
 canvas {
-    margin-top: 1rem;
-    width: 100% !important;
-    height: 200px !important;
+  margin-top: 1rem;
+  width: 100% !important;
+  height: 200px !important;
 }
 
 .hidden {
-    display: none;
+  display: none;
 }
 
 .error-message {
-    color: #ff4444;
-    margin-bottom: 1rem;
+  color: #ff4444;
+  margin-bottom: 1rem;
 }
 
 .result-hidden {
-    display: none;
+  display: none;
 }
 
 footer {
-    background-color: var(--primary-color);
-    color: white;
-    text-align: center;
-    padding: 1.5rem;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
+  background-color: var(--primary-color);
+  color: white;
+  text-align: center;
+  padding: 1.5rem;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
 }
