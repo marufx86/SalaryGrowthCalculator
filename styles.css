@@ -199,3 +199,30 @@ footer {
   bottom: 0;
   width: 100%;
 }
+
+/* Mobile Optimizations */
+@media (max-width: 600px) {
+  body {
+    padding: 0.5rem;
+  }
+  .calculator {
+    padding: 1.5rem;
+    width: 95%;
+    margin: 0 auto;
+  }
+  header,
+  footer {
+    padding: 1rem;
+  }
+  h1 {
+    font-size: 1.5rem;
+  }
+  .input-group label,
+  .input-group input,
+  button {
+    font-size: 1rem;
+  }
+  canvas {
+    height: 150px !important;
+  }
+}

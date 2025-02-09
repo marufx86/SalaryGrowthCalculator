@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const percentageGrowth = document.getElementById("percentage-growth");
   const prevYearlySalary = document.getElementById("prev-yearly-salary");
   const newYearlySalary = document.getElementById("new-yearly-salary");
+  const newYearlySalaryInflation = document.getElementById("new-yearly-salary-inflation");
   let salaryChart;
   let projectionChart;
   let darkMode = JSON.parse(localStorage.getItem("darkMode")) || true;
@@ -36,14 +37,17 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const absoluteDiff = targetSalary - baseSalary;
-    const percentageIncrease = (absoluteDiff / baseSalary) * 100;
+    const raisePercentage = (absoluteDiff / baseSalary) * 100;
     const prevYearly = baseSalary * 12;
     const newYearly = targetSalary * 12;
+    // Calculate inflation-adjusted yearly salary (for one year)
+    const newYearlyInflation = newYearly / (1 + inflationRate / 100);
 
     absoluteIncrease.textContent = `$${absoluteDiff.toFixed(2)}`;
-    percentageGrowth.textContent = `${percentageIncrease.toFixed(1)}%`;
+    percentageGrowth.textContent = `${raisePercentage.toFixed(1)}%`;
     prevYearlySalary.textContent = `$${prevYearly.toFixed(2)}`;
     newYearlySalary.textContent = `$${newYearly.toFixed(2)}`;
+    newYearlySalaryInflation.textContent = `$${newYearlyInflation.toFixed(2)}`;
 
     hideError();
 
@@ -85,13 +89,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const projectedYearlySalaries = [];
     const projectedRealSalaries = [];
     let currentNominalSalary = newYearly;
-    const annualRaise = percentageIncrease; // Using the calculated raise percentage
+    const annualRaise = raisePercentage; // Using the calculated raise percentage
 
     for (let year = 1; year <= 10; year++) {
       currentNominalSalary *= (1 + annualRaise / 100);
       projectedYearlySalaries.push(currentNominalSalary);
-      // Calculate the real (inflation-adjusted) salary:
-      // Divide the nominal salary by the cumulative inflation factor for the given year.
+      // Calculate the inflation-adjusted (real) salary for this year:
       const realSalary = currentNominalSalary / Math.pow(1 + inflationRate / 100, year);
       projectedRealSalaries.push(realSalary);
     }
@@ -156,7 +159,6 @@ document.addEventListener("DOMContentLoaded", () => {
   function showError() {
     const errorMessage = document.querySelector('.error-message');
     errorMessage.classList.remove('hidden');
-
     document.querySelectorAll('.results h2, .results p, .results canvas').forEach(el => {
       el.classList.add('result-hidden');
     });
@@ -165,7 +167,6 @@ document.addEventListener("DOMContentLoaded", () => {
   function hideError() {
     const errorMessage = document.querySelector('.error-message');
     errorMessage.classList.add('hidden');
-
     document.querySelectorAll('.results h2, .results p, .results canvas').forEach(el => {
       el.classList.remove('result-hidden');
     });
