@@ -14,7 +14,7 @@ body.dark-mode {
   --secondary-color: #4a5568;
   --accent-color: #6366f1;
   --background-color: #121212;
-  --text-color: #f7fafc;
+  --text-color: #000000;
   --muted-text-color: #a0aec0;
 }
 
