@@ -25,7 +25,7 @@ body.dark-mode {
 }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   color: var(--text-color);
   background-color: var(--background-color);
   line-height: 1.6;
@@ -238,3 +238,23 @@ footer {
     font-size: 0.8rem;
   }
 }
+
+#pdfDownload-report-btn {
+  background-color: var(--accent-color);
+  color: #fff;
+  border: none;
+  padding: 0.9rem;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  margin-top: 1rem;
+}
+
+#pdfDownload-report-btn:hover {
+  background-color: #4a5568;
+  transform: translateY(-2px);
+}
+
