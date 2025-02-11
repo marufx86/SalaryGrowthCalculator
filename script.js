@@ -1,3 +1,12 @@
+// Import EmailJS (assuming you are using a CDN or a module bundler)
+// For CDN, include the script tag in your HTML file: <script src="https://cdn.emailjs.com/sdk/2.6.0/email.min.js"></script>
+// For module bundlers like Webpack or Parcel, use the appropriate import statement.
+
+// Initialize EmailJS
+;(() => {
+  emailjs.init("Public") // Replace with your actual Public Key
+})()
+
 document.addEventListener("DOMContentLoaded", () => {
   const calculateBtn = document.getElementById("calculate-btn")
   const themeToggle = document.getElementById("theme-toggle")
@@ -233,57 +242,84 @@ document.addEventListener("DOMContentLoaded", () => {
     projectionChart.update()
   }
 
-  const pdfDownloadReportBtn = document.getElementById("pdfDownload-report-btn")
+  const emailReportBtn = document.getElementById("email-report-btn")
 
-  pdfDownloadReportBtn.addEventListener("click", () => {
-    generatePDFReport()
+  emailReportBtn.addEventListener("click", () => {
+    const userEmail = document.getElementById("user-email").value
+    if (!userEmail) {
+      alert("Please enter your email address.")
+      return
+    }
+    generateAndSendPDFReport(userEmail)
   })
 
-  function generatePDFReport() {
+  function generateAndSendPDFReport(userEmail) {
     const { jsPDF } = window.jspdf
     const doc = new jsPDF()
 
     // Add title
-    doc.setFontSize(20)
+    doc.setFontSize(16)
     doc.text("Salary Growth Report", 105, 15, null, null, "center")
 
     // Add salary analysis
-    doc.setFontSize(14)
-    doc.text("Salary Analysis", 20, 30)
     doc.setFontSize(12)
-    doc.text(`Absolute Increase: ${absoluteIncrease.textContent}`, 20, 40)
-    doc.text(`Percentage Growth: ${percentageGrowth.textContent}`, 20, 50)
-    doc.text(`Previous Yearly Salary: ${prevYearlySalary.textContent}`, 20, 60)
-    doc.text(`After Increase Yearly Salary: ${newYearlySalary.textContent}`, 20, 70)
-    doc.text(`After Increase Yearly Salary (inflation adjusted): ${newYearlySalaryInflation.textContent}`, 20, 80)
+    doc.text("Salary Analysis", 20, 25)
+    doc.setFontSize(10)
+    doc.text(`Absolute Increase: ${absoluteIncrease.textContent}`, 20, 35)
+    doc.text(`Percentage Growth: ${percentageGrowth.textContent}`, 20, 40)
+    doc.text(`Previous Yearly Salary: ${prevYearlySalary.textContent}`, 20, 45)
+    doc.text(`After Increase Yearly Salary: ${newYearlySalary.textContent}`, 20, 50)
+    doc.text(`After Increase Yearly Salary (inflation adjusted): ${newYearlySalaryInflation.textContent}`, 20, 55)
 
     // Add career advice
-    doc.setFontSize(14)
-    doc.text("Career Growth Advice", 20, 100)
     doc.setFontSize(12)
+    doc.text("Career Growth Advice", 20, 65)
+    doc.setFontSize(10)
     const advice = careerAdviceEl.textContent
     const splitAdvice = doc.splitTextToSize(advice, 170)
-    doc.text(splitAdvice, 20, 110)
+    doc.text(splitAdvice, 20, 70)
 
     // Add charts
-    doc.addPage()
-    doc.setFontSize(14)
-    doc.text("Salary Comparison Chart", 105, 15, null, null, "center")
+    doc.setFontSize(12)
+    doc.text("Salary Comparison Chart", 105, 100, null, null, "center")
     const salaryChartImg = document.getElementById("salary-chart").toDataURL("image/png")
-    doc.addImage(salaryChartImg, "PNG", 15, 30, 180, 100)
+    doc.addImage(salaryChartImg, "PNG", 15, 105, 180, 70)
 
-    doc.addPage()
-    doc.setFontSize(14)
-    doc.text("Salary Projection Chart", 105, 15, null, null, "center")
+    doc.setFontSize(12)
+    doc.text("Salary Projection Chart", 105, 185, null, null, "center")
     const projectionChartImg = document.getElementById("projection-chart").toDataURL("image/png")
-    doc.addImage(projectionChartImg, "PNG", 15, 30, 180, 100)
+    doc.addImage(projectionChartImg, "PNG", 15, 190, 180, 70)
 
-    // Save the PDF
-    doc.save("salary_growth_report.pdf")
+    // Save PDF locally
+    const pdfName = `SalaryGrowthReport_${Date.now()}.pdf`
+    doc.save(pdfName)
 
-    // In a real-world scenario, you would send this PDF to a server to email it
-    // For demonstration purposes, we'll just show an alert
-    alert("Press OK to download generated Salary PDF report.")
+    // Prepare email parameters
+    const emailParams = {
+      to_email: userEmail,
+      from_name: "Salary Growth Calculator",
+      message: `Your Salary Growth Report has been generated. In a real-world application, you would receive a link to download the PDF here. For now, please check your downloads folder for the file named ${pdfName}.`,
+    }
+
+    console.log("Sending email with params:", emailParams)
+
+    // Send email using EmailJS
+        // ServiceID, Template ID
+    emailjs.send("service_ID", "template_ID", emailParams).then(
+      (response) => {
+        console.log("Email sent successfully", response)
+        alert(
+          `Salary Growth Report has been saved as ${pdfName} in your downloads folder. An email has been sent to ${userEmail} with further instructions.`,
+        )
+      },
+      (error) => {
+        console.error("Email send failed", error)
+        console.error("Error details:", JSON.stringify(error))
+        alert(
+          `The report has been saved as ${pdfName} in your downloads folder, but we couldn't send an email to ${userEmail}. Please check your internet connection and try again later.`,
+        )
+      },
+    )
   }
 })
 
