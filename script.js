@@ -4,6 +4,7 @@
 })();
 
 document.addEventListener("DOMContentLoaded", () => {
+  // Buttons and DOM Elements
   const calculateBtn = document.getElementById("calculate-btn");
   const themeToggle = document.getElementById("theme-toggle");
   const resultsDiv = document.getElementById("results");
@@ -12,11 +13,31 @@ document.addEventListener("DOMContentLoaded", () => {
   const prevYearlySalaryEl = document.getElementById("prev-yearly-salary");
   const newYearlySalaryEl = document.getElementById("new-yearly-salary");
   const newYearlySalaryInflationEl = document.getElementById("new-yearly-salary-inflation");
-  const convertedSalaryEl = document.getElementById("converted-salary");
   const careerAdviceEl = document.getElementById("career-advice");
-  const currencySelect = document.getElementById("currency-select");
-  const emailReportBtn = document.getElementById("email-report-btn");
   const userEmailEl = document.getElementById("user-email");
+  const emailReportBtn = document.getElementById("email-report-btn");
+
+  // Converted value elements
+  const convertedPrevYearlyEl = document.getElementById("converted-prev-yearly");
+  const convertedNewYearlyEl = document.getElementById("converted-new-yearly");
+  const convertedInflationAdjustedEl = document.getElementById("converted-inflation-adjusted");
+
+  // Currency dropdowns for input and conversion
+  const inputCurrencySelect = document.getElementById("input-currency");
+  const conversionCurrencySelect = document.getElementById("conversion-currency");
+
+  // For displaying currency codes in results
+  const inputCurrencyDisplayEls = [
+    document.getElementById("input-currency-display"),
+    document.getElementById("input-currency-display2"),
+    document.getElementById("input-currency-display3"),
+    document.getElementById("input-currency-display4")
+  ];
+  const conversionCurrencyDisplayEls = [
+    document.getElementById("conversion-currency-display"),
+    document.getElementById("conversion-currency-display2"),
+    document.getElementById("conversion-currency-display3")
+  ];
 
   let salaryChart, projectionChart;
   let darkMode = JSON.parse(localStorage.getItem("darkMode")) || false;
@@ -48,49 +69,64 @@ document.addEventListener("DOMContentLoaded", () => {
   fetchExchangeRates();
 
   calculateBtn.addEventListener("click", () => {
+    // Parse input values
     const baseSalaryInput = parseFloat(document.getElementById("base-salary").value);
     const targetSalaryInput = parseFloat(document.getElementById("target-salary").value);
     const inflationRate = parseFloat(document.getElementById("inflation-rate").value) || 0;
-    const selectedCurrency = currencySelect.value;
+    const inputCurrency = inputCurrencySelect.value;
+    const conversionCurrency = conversionCurrencySelect.value;
 
     if (isNaN(baseSalaryInput) || isNaN(targetSalaryInput)) {
       alert("Please enter valid salary amounts.");
       return;
     }
 
-    // Convert monthly salary to yearly salary
+    // Calculate absolute increase as the monthly difference
+    const absoluteDiff = targetSalaryInput - baseSalaryInput; // e.g. 15,000 - 12,000 = 3,000
+    // Percentage growth based on monthly values
+    const raisePercentage = (absoluteDiff / baseSalaryInput) * 100;
+    // Yearly calculations remain unchanged
     const prevYearly = baseSalaryInput * 12;
     const newYearly = targetSalaryInput * 12;
-
-    // Calculate growth
-    const absoluteDiff = newYearly - prevYearly;
-    const raisePercentage = (absoluteDiff / prevYearly) * 100;
     const newYearlyInflation = newYearly / (1 + inflationRate / 100);
 
-    // Update DOM with results
-    absoluteIncreaseEl.textContent = `$${absoluteDiff.toFixed(2)}`;
+    // Update results (in input currency) – using whole numbers for most values.
+    absoluteIncreaseEl.textContent = `${absoluteDiff.toFixed(0)}`;
     percentageGrowthEl.textContent = `${raisePercentage.toFixed(1)}%`;
-    prevYearlySalaryEl.textContent = `$${prevYearly.toFixed(2)}`;
-    newYearlySalaryEl.textContent = `$${newYearly.toFixed(2)}`;
-    newYearlySalaryInflationEl.textContent = `$${newYearlyInflation.toFixed(2)}`;
+    prevYearlySalaryEl.textContent = `${prevYearly.toFixed(0)}`;
+    newYearlySalaryEl.textContent = `${newYearly.toFixed(0)}`;
+    // Inflation adjusted salary shows a dollar sign as per sample
+    newYearlySalaryInflationEl.textContent = `${newYearlyInflation.toFixed(0)}`;
 
-    // Currency conversion for new yearly salary
-    if (exchangeRates[selectedCurrency]) {
-      const convertedSalary = newYearly * exchangeRates[selectedCurrency];
-      convertedSalaryEl.textContent = `${convertedSalary.toFixed(2)} ${selectedCurrency}`;
+    // Display the input currency code with the amounts
+    inputCurrencyDisplayEls.forEach(el => el.textContent = ` ${inputCurrency}`);
+
+    // If exchange rates for both currencies are available, compute conversion factor
+    if (exchangeRates[inputCurrency] && exchangeRates[conversionCurrency]) {
+      const conversionFactor = exchangeRates[conversionCurrency] / exchangeRates[inputCurrency];
+      const convertedPrevYearly = prevYearly * conversionFactor;
+      const convertedNewYearly = newYearly * conversionFactor;
+      const convertedInflationAdjusted = newYearlyInflation * conversionFactor;
+      convertedPrevYearlyEl.textContent = `${convertedPrevYearly.toFixed(0)}`;
+      convertedNewYearlyEl.textContent = `${convertedNewYearly.toFixed(0)}`;
+      convertedInflationAdjustedEl.textContent = `${convertedInflationAdjusted.toFixed(0)}`;
+      // Display the conversion currency code with the converted values
+      conversionCurrencyDisplayEls.forEach(el => el.textContent = ` ${conversionCurrency}`);
     } else {
-      convertedSalaryEl.textContent = "Exchange rate unavailable";
+      convertedPrevYearlyEl.textContent = "N/A";
+      convertedNewYearlyEl.textContent = "N/A";
+      convertedInflationAdjustedEl.textContent = "N/A";
     }
 
-    // Career advice based on real increase
+    // Career advice based on real increase percentage
     const realIncreasePercentage = ((newYearlyInflation / prevYearly) - 1) * 100;
     if (realIncreasePercentage < 5) {
-      careerAdviceEl.textContent = `Your nominal raise is ${raisePercentage.toFixed(1)}%, but after inflation, the real increase is ${realIncreasePercentage.toFixed(1)}%. Consider negotiating higher.`;
+      careerAdviceEl.textContent = `Your nominal raise is ${raisePercentage.toFixed(1)}%, but after inflation the real increase is ${realIncreasePercentage.toFixed(1)}%. Consider negotiating higher.`;
     } else {
       careerAdviceEl.textContent = `Great work! Your nominal raise is ${raisePercentage.toFixed(1)}% and your real increase is ${realIncreasePercentage.toFixed(1)}%. Keep growing!`;
     }
 
-    // Show results
+    // Show results section
     resultsDiv.classList.remove("hidden");
     resultsDiv.classList.add("show");
 
@@ -107,7 +143,7 @@ document.addEventListener("DOMContentLoaded", () => {
       data: {
         labels: ["Current Yearly Salary", "New Yearly Salary"],
         datasets: [{
-          label: "Salary ($)",
+          label: "Salary",
           data: [prevYearly, newYearly],
           backgroundColor: darkMode ? ["#4a5568", "#6366f1"] : ["#667eea", "#90cdf4"],
           borderRadius: 6
@@ -168,7 +204,7 @@ document.addEventListener("DOMContentLoaded", () => {
           ticks: { color: darkMode ? "#d0d5dd" : "#2d3748" }
         },
         y: {
-          title: { display: true, text: "Salary ($)", font: { size: tickFontSize } },
+          title: { display: true, text: "Salary", font: { size: tickFontSize } },
           ticks: { color: darkMode ? "#d0d5dd" : "#2d3748" },
           beginAtZero: true
         }
@@ -185,12 +221,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     emailjs.send("service_ID", "template_ID", {
       to_email: email,
-      absolute_increase: absoluteIncreaseEl.textContent,
+      absolute_increase: absoluteIncreaseEl.textContent + " " + inputCurrencySelect.value,
       percentage_growth: percentageGrowthEl.textContent,
-      prev_yearly: prevYearlySalaryEl.textContent,
-      new_yearly: newYearlySalaryEl.textContent,
-      inflation_adjusted: newYearlySalaryInflationEl.textContent,
-      converted_salary: convertedSalaryEl.textContent,
+      prev_yearly: prevYearlySalaryEl.textContent + " " + inputCurrencySelect.value,
+      new_yearly: newYearlySalaryEl.textContent + " " + inputCurrencySelect.value,
+      inflation_adjusted: newYearlySalaryInflationEl.textContent + " " + inputCurrencySelect.value,
+      converted_prev_yearly: convertedPrevYearlyEl.textContent + " " + conversionCurrencySelect.value,
+      converted_new_yearly: convertedNewYearlyEl.textContent + " " + conversionCurrencySelect.value,
+      converted_inflation_adjusted: convertedInflationAdjustedEl.textContent + " " + conversionCurrencySelect.value,
       career_advice: careerAdviceEl.textContent,
       current_date: new Date().toLocaleDateString()
     }).then(() => {

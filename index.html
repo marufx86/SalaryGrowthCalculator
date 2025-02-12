@@ -5,10 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Salary Growth Calculator & Currency Converter</title>
   <link rel="stylesheet" href="styles.css" />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
-    rel="stylesheet"
-  />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
   <!-- Chart.js Library -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- EmailJS Library -->
@@ -34,6 +31,7 @@
 
   <main>
     <div class="calculator">
+      <!-- Salary Inputs -->
       <div class="input-group">
         <label for="base-salary">Current Monthly Salary</label>
         <input type="number" id="base-salary" placeholder="Enter current salary" required />
@@ -42,36 +40,87 @@
         <label for="target-salary">Target Monthly Salary</label>
         <input type="number" id="target-salary" placeholder="Enter desired salary" required />
       </div>
+      <!-- Inflation Input -->
       <div class="input-group">
         <label for="inflation-rate">Annual Inflation Rate (%)</label>
         <input type="number" id="inflation-rate" placeholder="Enter annual inflation rate" step="0.1" required />
       </div>
+      <!-- Input Currency Selection -->
       <div class="input-group">
-        <label for="currency-select">Select Currency</label>
-        <select id="currency-select">
+        <label for="input-currency">Input Currency</label>
+        <select id="input-currency">
           <option value="USD">USD - US Dollar</option>
           <option value="EUR">EUR - Euro</option>
           <option value="GBP">GBP - British Pound</option>
           <option value="BDT">BDT - Bangladeshi Taka</option>
+          <option value="CNY">CNY - Chinese Yuan</option>
         </select>
       </div>
+      <!-- Conversion Currency Selection -->
+      <div class="input-group">
+        <label for="conversion-currency">Conversion Currency</label>
+        <select id="conversion-currency">
+          <option value="USD">USD - US Dollar</option>
+          <option value="EUR">EUR - Euro</option>
+          <option value="GBP">GBP - British Pound</option>
+          <option value="BDT">BDT - Bangladeshi Taka</option>
+          <option value="CNY">CNY - Chinese Yuan</option>
+        </select>
+      </div>
+
       <button id="calculate-btn">Calculate Growth</button>
 
+      <!-- Results Section -->
       <div id="results" class="results hidden">
         <h2>Salary Analysis</h2>
-        <p>Absolute Increase: <span id="absolute-increase">$0.00</span></p>
-        <p>Percentage Growth: <span id="percentage-growth">0%</span></p>
-        <p>Previous Yearly Salary: <span id="prev-yearly-salary">$0.00</span></p>
-        <p>New Yearly Salary: <span id="new-yearly-salary">$0.00</span></p>
-        <p>Inflation Adjusted Salary: <span id="new-yearly-salary-inflation">$0.00</span></p>
-        <p>Converted Salary: <span id="converted-salary">0.00</span></p>
-        <p>Career Growth Advice: <span id="career-advice">N/A</span></p>
+        <p>
+          Absolute Increase: 
+          <span id="absolute-increase">3000</span>
+          <span id="input-currency-display"></span>
+        </p>
+        <p>
+          Percentage Growth: <span id="percentage-growth">25.0%</span>
+        </p>
+        <p>
+          Previous Yearly Salary: 
+          <span id="prev-yearly-salary">144000</span>
+          <span id="input-currency-display2"></span>
+        </p>
+        <p>
+          New Yearly Salary: 
+          <span id="new-yearly-salary">180000</span>
+          <span id="input-currency-display3"></span>
+        </p>
+        <p>
+          Inflation Adjusted Salary: 
+          <span id="new-yearly-salary-inflation">$162162</span>
+          <span id="input-currency-display4"></span>
+        </p>
+        <p>
+          Converted Previous Yearly Salary: 
+          <span id="converted-prev-yearly">1184</span>
+          <span id="conversion-currency-display"></span>
+        </p>
+        <p>
+          Converted New Yearly Salary: 
+          <span id="converted-new-yearly">1480</span>
+          <span id="conversion-currency-display2"></span>
+        </p>
+        <p>
+          Converted Inflation Adjusted Salary: 
+          <span id="converted-inflation-adjusted">1334</span>
+          <span id="conversion-currency-display3"></span>
+        </p>
+        <p>
+          Career Growth Advice: <span id="career-advice">N/A</span>
+        </p>
         <div class="chart-container">
           <canvas id="salary-chart"></canvas>
         </div>
         <div class="chart-container">
           <canvas id="projection-chart"></canvas>
         </div>
+        <!-- Email Report -->
         <div class="input-group">
           <label for="user-email">Your Email</label>
           <input type="email" id="user-email" placeholder="Enter your email" required />
