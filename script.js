@@ -1,23 +1,28 @@
-// Initialize EmailJS
+/* Initialize EmailJS – replace "PublicAPI" with your actual public key if needed */
 ;(() => {
-  emailjs.init("PublicAPI"); // Replace with your EmailJS public key
+  emailjs.init("PublicAPI");
 })();
 
 document.addEventListener("DOMContentLoaded", () => {
   const calculateBtn = document.getElementById("calculate-btn");
   const themeToggle = document.getElementById("theme-toggle");
   const resultsDiv = document.getElementById("results");
-  const absoluteIncrease = document.getElementById("absolute-increase");
-  const percentageGrowth = document.getElementById("percentage-growth");
-  const prevYearlySalary = document.getElementById("prev-yearly-salary");
-  const newYearlySalary = document.getElementById("new-yearly-salary");
-  const newYearlySalaryInflation = document.getElementById("new-yearly-salary-inflation");
+  const absoluteIncreaseEl = document.getElementById("absolute-increase");
+  const percentageGrowthEl = document.getElementById("percentage-growth");
+  const prevYearlySalaryEl = document.getElementById("prev-yearly-salary");
+  const newYearlySalaryEl = document.getElementById("new-yearly-salary");
+  const newYearlySalaryInflationEl = document.getElementById("new-yearly-salary-inflation");
+  const convertedSalaryEl = document.getElementById("converted-salary");
   const careerAdviceEl = document.getElementById("career-advice");
-  let salaryChart;
-  let projectionChart;
-  let darkMode = JSON.parse(localStorage.getItem("darkMode")) || false;
+  const currencySelect = document.getElementById("currency-select");
+  const emailReportBtn = document.getElementById("email-report-btn");
+  const userEmailEl = document.getElementById("user-email");
 
-  // Theme functionality
+  let salaryChart, projectionChart;
+  let darkMode = JSON.parse(localStorage.getItem("darkMode")) || false;
+  let exchangeRates = {};
+
+  // Apply saved theme
   document.body.classList.toggle("dark-mode", darkMode);
   themeToggle.classList.toggle("active", darkMode);
 
@@ -30,55 +35,80 @@ document.addEventListener("DOMContentLoaded", () => {
     if (projectionChart) updateProjectionTheme();
   });
 
-  // Calculations
-  calculateBtn.addEventListener("click", () => {
-    const baseSalary = parseFloat(document.getElementById("base-salary").value);
-    const targetSalary = parseFloat(document.getElementById("target-salary").value);
-    let inflationRate = parseFloat(document.getElementById("inflation-rate").value) || 0;
+  // Fetch exchange rates (base: USD)
+  async function fetchExchangeRates() {
+    try {
+      const response = await fetch("https://api.exchangerate-api.com/v4/latest/USD");
+      const data = await response.json();
+      exchangeRates = data.rates;
+    } catch (error) {
+      console.error("Error fetching exchange rates:", error);
+    }
+  }
+  fetchExchangeRates();
 
-    if (isNaN(baseSalary) || isNaN(targetSalary)) {
-      showError();
+  calculateBtn.addEventListener("click", () => {
+    const baseSalaryInput = parseFloat(document.getElementById("base-salary").value);
+    const targetSalaryInput = parseFloat(document.getElementById("target-salary").value);
+    const inflationRate = parseFloat(document.getElementById("inflation-rate").value) || 0;
+    const selectedCurrency = currencySelect.value;
+
+    if (isNaN(baseSalaryInput) || isNaN(targetSalaryInput)) {
+      alert("Please enter valid salary amounts.");
       return;
     }
 
-    const absoluteDiff = targetSalary - baseSalary;
-    const raisePercentage = (absoluteDiff / baseSalary) * 100;
-    const prevYearly = baseSalary * 12;
-    const newYearlyVal = targetSalary * 12;
-    const newYearlyInflationVal = newYearlyVal / (1 + inflationRate / 100);
+    // Convert monthly salary to yearly salary
+    const prevYearly = baseSalaryInput * 12;
+    const newYearly = targetSalaryInput * 12;
 
-    // Update results
-    absoluteIncrease.textContent = `$${absoluteDiff.toFixed(2)}`;
-    percentageGrowth.textContent = `${raisePercentage.toFixed(1)}%`;
-    prevYearlySalary.textContent = `$${prevYearly.toFixed(2)}`;
-    newYearlySalary.textContent = `$${newYearlyVal.toFixed(2)}`;
-    newYearlySalaryInflation.textContent = `$${newYearlyInflationVal.toFixed(2)}`;
+    // Calculate growth
+    const absoluteDiff = newYearly - prevYearly;
+    const raisePercentage = (absoluteDiff / prevYearly) * 100;
+    const newYearlyInflation = newYearly / (1 + inflationRate / 100);
 
-    // Career advice
-    const realIncreasePercentage = (newYearlyInflationVal / prevYearly - 1) * 100;
-    careerAdviceEl.textContent = realIncreasePercentage < 5 ?
-      `Your nominal raise is ${raisePercentage.toFixed(1)}%, but after inflation, real increase is ${realIncreasePercentage.toFixed(1)}%. Consider negotiating higher.` :
-      `Great work! ${raisePercentage.toFixed(1)}% nominal raise, ${realIncreasePercentage.toFixed(1)}% real increase. Keep growing!`;
+    // Update DOM with results
+    absoluteIncreaseEl.textContent = `$${absoluteDiff.toFixed(2)}`;
+    percentageGrowthEl.textContent = `${raisePercentage.toFixed(1)}%`;
+    prevYearlySalaryEl.textContent = `$${prevYearly.toFixed(2)}`;
+    newYearlySalaryEl.textContent = `$${newYearly.toFixed(2)}`;
+    newYearlySalaryInflationEl.textContent = `$${newYearlyInflation.toFixed(2)}`;
 
-    hideError();
+    // Currency conversion for new yearly salary
+    if (exchangeRates[selectedCurrency]) {
+      const convertedSalary = newYearly * exchangeRates[selectedCurrency];
+      convertedSalaryEl.textContent = `${convertedSalary.toFixed(2)} ${selectedCurrency}`;
+    } else {
+      convertedSalaryEl.textContent = "Exchange rate unavailable";
+    }
+
+    // Career advice based on real increase
+    const realIncreasePercentage = ((newYearlyInflation / prevYearly) - 1) * 100;
+    if (realIncreasePercentage < 5) {
+      careerAdviceEl.textContent = `Your nominal raise is ${raisePercentage.toFixed(1)}%, but after inflation, the real increase is ${realIncreasePercentage.toFixed(1)}%. Consider negotiating higher.`;
+    } else {
+      careerAdviceEl.textContent = `Great work! Your nominal raise is ${raisePercentage.toFixed(1)}% and your real increase is ${realIncreasePercentage.toFixed(1)}%. Keep growing!`;
+    }
+
+    // Show results
     resultsDiv.classList.remove("hidden");
     resultsDiv.classList.add("show");
 
-    // Charts
-    updateCharts(prevYearly, newYearlyVal, inflationRate, raisePercentage);
+    // Update charts
+    updateCharts(prevYearly, newYearly, inflationRate, raisePercentage);
   });
 
-  function updateCharts(prevYearly, newYearlyVal, inflationRate, raisePercentage) {
-    // Salary chart
+  function updateCharts(prevYearly, newYearly, inflationRate, raisePercentage) {
+    // Salary Comparison Chart
     if (salaryChart) salaryChart.destroy();
     const salaryCtx = document.getElementById("salary-chart").getContext("2d");
     salaryChart = new Chart(salaryCtx, {
       type: "bar",
       data: {
-        labels: ["Current Salary", "Target Salary"],
+        labels: ["Current Yearly Salary", "New Yearly Salary"],
         datasets: [{
-          label: "Yearly Salary ($)",
-          data: [prevYearly, newYearlyVal],
+          label: "Salary ($)",
+          data: [prevYearly, newYearly],
           backgroundColor: darkMode ? ["#4a5568", "#6366f1"] : ["#667eea", "#90cdf4"],
           borderRadius: 6
         }]
@@ -86,13 +116,18 @@ document.addEventListener("DOMContentLoaded", () => {
       options: getChartOptions("Salary Comparison")
     });
 
-    // Projection chart
-    const projections = Array.from({ length: 10 }, (_, i) => i + 1)
-      .reduce((acc, year) => {
-        acc.nominal.push(acc.nominal[acc.nominal.length - 1] * (1 + raisePercentage / 100));
-        acc.real.push(acc.nominal[year] / Math.pow(1 + inflationRate / 100, year));
-        return acc;
-      }, { nominal: [newYearlyVal], real: [] });
+    // 10-Year Projection Chart
+    let projections = {
+      nominal: [newYearly],
+      real: []
+    };
+    for (let year = 1; year <= 10; year++) {
+      let nominalSalary = projections.nominal[projections.nominal.length - 1] * (1 + raisePercentage / 100);
+      projections.nominal.push(nominalSalary);
+      projections.real.push(nominalSalary / Math.pow(1 + inflationRate / 100, year));
+    }
+    // Remove the initial value from nominal projection
+    const nominalProjection = projections.nominal.slice(1);
 
     if (projectionChart) projectionChart.destroy();
     const projectionCtx = document.getElementById("projection-chart").getContext("2d");
@@ -103,7 +138,7 @@ document.addEventListener("DOMContentLoaded", () => {
         datasets: [
           {
             label: "Nominal Salary",
-            data: projections.nominal.slice(1),
+            data: nominalProjection,
             borderColor: darkMode ? "#6366f1" : "#667eea",
             tension: 0.4
           },
@@ -133,7 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
           ticks: { color: darkMode ? "#d0d5dd" : "#2d3748" }
         },
         y: {
-          title: { display: true, text: "Yearly Salary ($)", font: { size: tickFontSize } },
+          title: { display: true, text: "Salary ($)", font: { size: tickFontSize } },
           ticks: { color: darkMode ? "#d0d5dd" : "#2d3748" },
           beginAtZero: true
         }
@@ -141,18 +176,21 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   }
 
-  // Email functionality
-  document.getElementById("email-report-btn").addEventListener("click", () => {
-    const email = document.getElementById("user-email").value;
-    if (!email) return alert("Please enter your email address");
-
+  // Email Report Functionality
+  emailReportBtn.addEventListener("click", () => {
+    const email = userEmailEl.value;
+    if (!email) {
+      alert("Please enter your email address.");
+      return;
+    }
     emailjs.send("service_ID", "template_ID", {
       to_email: email,
-      absolute_increase: absoluteIncrease.textContent,
-      percentage_growth: percentageGrowth.textContent,
-      prev_yearly: prevYearlySalary.textContent,
-      new_yearly: newYearlySalary.textContent,
-      inflation_adjusted: newYearlySalaryInflation.textContent,
+      absolute_increase: absoluteIncreaseEl.textContent,
+      percentage_growth: percentageGrowthEl.textContent,
+      prev_yearly: prevYearlySalaryEl.textContent,
+      new_yearly: newYearlySalaryEl.textContent,
+      inflation_adjusted: newYearlySalaryInflationEl.textContent,
+      converted_salary: convertedSalaryEl.textContent,
       career_advice: careerAdviceEl.textContent,
       current_date: new Date().toLocaleDateString()
     }).then(() => {
@@ -163,25 +201,18 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Helper functions
-  function showError() {
-    document.querySelector(".error-message").classList.remove("hidden");
-    document.querySelectorAll(".results > *:not(.error-message)").forEach(el => el.classList.add("result-hidden"));
-  }
-
-  function hideError() {
-    document.querySelector(".error-message").classList.add("hidden");
-    document.querySelectorAll(".result-hidden").forEach(el => el.classList.remove("result-hidden"));
-  }
-
   function updateChartTheme() {
-    salaryChart.data.datasets[0].backgroundColor = darkMode ? ["#4a5568", "#6366f1"] : ["#667eea", "#90cdf4"];
-    salaryChart.update();
+    if (salaryChart) {
+      salaryChart.data.datasets[0].backgroundColor = darkMode ? ["#4a5568", "#6366f1"] : ["#667eea", "#90cdf4"];
+      salaryChart.update();
+    }
   }
 
   function updateProjectionTheme() {
-    projectionChart.data.datasets[0].borderColor = darkMode ? "#6366f1" : "#667eea";
-    projectionChart.data.datasets[1].borderColor = darkMode ? "#e53e3e" : "#f56565";
-    projectionChart.update();
+    if (projectionChart) {
+      projectionChart.data.datasets[0].borderColor = darkMode ? "#6366f1" : "#667eea";
+      projectionChart.data.datasets[1].borderColor = darkMode ? "#e53e3e" : "#f56565";
+      projectionChart.update();
+    }
   }
 });

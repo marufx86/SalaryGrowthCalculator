@@ -1,18 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Salary Growth Calculator</title>
-  <link rel="stylesheet" href="styles.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Salary Growth Calculator & Currency Converter</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  />
+  <!-- Chart.js Library -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- EmailJS Library -->
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 </head>
 <body>
   <header>
     <h1>Salary Growth Calculator</h1>
-    <button id="theme-toggle">
+    <button id="theme-toggle" aria-label="Toggle Theme">
       <svg class="sun-icon" viewBox="0 0 24 24">
         <circle cx="12" cy="12" r="10"></circle>
         <circle cx="12" cy="12" r="3" fill="#fff"></circle>
@@ -31,26 +36,35 @@
     <div class="calculator">
       <div class="input-group">
         <label for="base-salary">Current Monthly Salary</label>
-        <input type="number" id="base-salary" placeholder="Enter current salary" required>
+        <input type="number" id="base-salary" placeholder="Enter current salary" required />
       </div>
       <div class="input-group">
         <label for="target-salary">Target Monthly Salary</label>
-        <input type="number" id="target-salary" placeholder="Enter desired salary" required>
+        <input type="number" id="target-salary" placeholder="Enter desired salary" required />
       </div>
       <div class="input-group">
         <label for="inflation-rate">Annual Inflation Rate (%)</label>
-        <input type="number" id="inflation-rate" placeholder="Enter annual inflation rate" step="0.1" required>
+        <input type="number" id="inflation-rate" placeholder="Enter annual inflation rate" step="0.1" required />
+      </div>
+      <div class="input-group">
+        <label for="currency-select">Select Currency</label>
+        <select id="currency-select">
+          <option value="USD">USD - US Dollar</option>
+          <option value="EUR">EUR - Euro</option>
+          <option value="GBP">GBP - British Pound</option>
+          <option value="BDT">BDT - Bangladeshi Taka</option>
+        </select>
       </div>
       <button id="calculate-btn">Calculate Growth</button>
-      
+
       <div id="results" class="results hidden">
-        <div class="error-message hidden">Please enter valid salary figures.</div>
         <h2>Salary Analysis</h2>
         <p>Absolute Increase: <span id="absolute-increase">$0.00</span></p>
         <p>Percentage Growth: <span id="percentage-growth">0%</span></p>
         <p>Previous Yearly Salary: <span id="prev-yearly-salary">$0.00</span></p>
-        <p>After Increase Yearly Salary: <span id="new-yearly-salary">$0.00</span></p>
-        <p>After Increase Yearly Salary (inflation adjusted): <span id="new-yearly-salary-inflation">$0.00</span></p>
+        <p>New Yearly Salary: <span id="new-yearly-salary">$0.00</span></p>
+        <p>Inflation Adjusted Salary: <span id="new-yearly-salary-inflation">$0.00</span></p>
+        <p>Converted Salary: <span id="converted-salary">0.00</span></p>
         <p>Career Growth Advice: <span id="career-advice">N/A</span></p>
         <div class="chart-container">
           <canvas id="salary-chart"></canvas>
@@ -60,7 +74,7 @@
         </div>
         <div class="input-group">
           <label for="user-email">Your Email</label>
-          <input type="email" id="user-email" placeholder="Enter your email" required>
+          <input type="email" id="user-email" placeholder="Enter your email" required />
         </div>
         <button id="email-report-btn">Email Report</button>
       </div>
